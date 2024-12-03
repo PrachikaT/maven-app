@@ -117,3 +117,37 @@ URL : http://public-ip:port/
 # Step - 9 : SSL certificate #
 	
 # Step - 10 : After your practise, delete resources we have used in AWS Cloud to avoid billing ##
+# Steps for declarative pipeline script
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'
+    }
+
+    stages {
+        stage('Git Checkout-github') {
+            steps {
+                git branch: 'main', url: 'https://github.com/PrachikaT/maven-app.git'
+            }
+        }
+
+        stage('Build Step') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Create image') {
+            steps {
+                sh 'docker build -t prachi1 .'
+            }
+        }
+
+        stage('Docker Container app') {
+            steps {
+                sh 'docker run -d -p 9000:8080 -t prachi1'
+            }
+        }
+    }
+}
